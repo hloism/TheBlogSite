@@ -1,0 +1,47 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <NoDefaultLaunchSettingsFile>true</NoDefaultLaunchSettingsFile>
+    <StaticWebAssetProjectMode>Default</StaticWebAssetProjectMode>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Models\TaskerItemDTO.cs" />
+    <Compile Remove="Services\BlogPostService.cs" />
+    <Compile Remove="Services\CategoryService.cs" />
+    <Compile Remove="Services\Interfaces\ITaskerItemService.cs" />
+    <Compile Remove="Services\TaskerItemService.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="Components\Pages\Categories.razor" />
+    <Content Remove="Components\Pages\Tasker.razor" />
+    <Content Remove="Components\UI\CategoryCard.razor" />
+    <Content Remove="Components\UI\CategoryForm.razor" />
+    <Content Remove="Components\UI\ManageBlog.razor" />
+    <Content Remove="Components\UI\ManageBlogForm.razor" />
+    <Content Remove="Components\UI\TaskerLineItem.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Components\Pages\Tasker.razor.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="8.0.7" />
+    <PackageReference Include="TinyMCE.Blazor" Version="1.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Components\Pages\ManageCategories.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Components\Pages\ManageCategories.razor" />
+  </ItemGroup>
+
+</Project>

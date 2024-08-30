@@ -1,0 +1,25 @@
+﻿<div class="accordion" id="@accordionId">
+	@foreach (var blogPost in BlogPosts)
+	{
+		<BlogPostAccordionItem @key="blogPost.Id"
+								BlogPost="blogPost"
+								AccordionId="@accordionId"
+								OnUpdate="OnBlogPostUpdate"
+								OnDelete="OnBlogPostDelete" />
+	}
+</div>
+
+
+
+@code {
+	[Parameter, EditorRequired]
+	public IEnumerable<BlogPostDTO> BlogPosts { get; set; } = [];
+
+	private string accordionId = Guid.NewGuid().ToString();
+
+	[Parameter, EditorRequired]
+	public EventCallback<int> OnBlogPostDelete { get; set; }
+
+	[Parameter, EditorRequired]
+	public EventCallback<BlogPostDTO> OnBlogPostUpdate { get; set; }
+}

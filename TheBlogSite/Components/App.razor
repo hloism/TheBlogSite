@@ -1,0 +1,58 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<base href="/" />
+
+	<!-- Import Google font (Inter) -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet" id="google-font">
+
+	<!---Font Icon-->
+	<link href="/assets/icons/around-icons.min.css" rel="stylesheet" />
+
+	<!--Theme styles & Boostap-->
+	<link href="/assets/css/theme.min.css" rel="stylesheet" />
+
+	<!--Custom CSS-->
+	<link rel="stylesheet" href="/css/theme.css" />
+	<link rel="stylesheet" href="/css/app.css" />
+	<link rel="stylesheet" href="TheBlogSite.styles.css" />
+	<link href="favicon.png" type="image/png" rel="stylesheet" />
+
+
+	<!-- Code highlighting -->
+	<link rel="stylesheet" media="screen" href="prism.css">
+	<link rel="stylesheet" media="screen" href="assets/vendor/prismjs/themes/prism.min.css">
+	<link rel="stylesheet" media="screen" href="assets/vendor/prismjs/plugins/toolbar/prism-toolbar.min.css">
+	<link rel="stylesheet" media="screen" href="assets/vendor/prismjs/plugins/line-numbers/prism-line-numbers.min.css">
+
+
+	<HeadOutlet />
+</head>
+
+<body data-cf-theme="blue">
+	<Routes />
+	<!--Theme Scripts & Bootstrap-->
+	<script src="/assets/js/theme.min.js"></script>
+
+	<!--TinyMCE-->
+	<script src="_content/TinyMCE.Blazor/tinymce-blazor.js"></script>
+
+	<script src="_framework/blazor.web.js"></script>
+
+	<script>
+		Blazor.addEventListener('enhancedload', () => {
+			window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+			// use behavior: 'instant' if you want to immediately go to the top
+		});
+	</script>
+
+</body>
+
+
+
+</html>

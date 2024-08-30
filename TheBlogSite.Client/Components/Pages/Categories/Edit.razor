@@ -1,0 +1,59 @@
+﻿@page "/posts/edit/{id:int}"
+@attribute [Authorize] 
+@rendermode InteractiveServer
+
+@inject IBlogPostService BlogPostService
+@inject NavigationManager Nav
+
+
+<!--Build the UI-->
+<PageTitle>The BlogSite | Edit Post</PageTitle>
+<div class="p-3 my-5 border border-2 shadow-lg bg-light container">
+	@if(blogPost is not null)
+	{
+		<BlogPostForm BlogPost="blogPost" OnSubmit="HandleSubmit"/>
+	}
+</div>
+
+@code {
+	//look at page directive to route 
+	[Parameter]
+	public int Id { get; set; }
+
+	//all pages need this!
+	[CascadingParameter]
+	private Task<AuthenticationState>? AuthStateTask { get; set; }
+
+	private UserInfo? userInfo;
+
+	private BlogPostDTO? blogPost;
+
+	//get fired when parameter from parents are received Id gets set and Task will set it will fire (Life cycle event) ONLY HAPPENS ONCE
+	protected override async Task OnInitializedAsync()
+	{
+		try
+		{
+			userInfo = await UserInfoHelper.GetUserInfoAsync(AuthStateTask);
+			blogPost = await BlogPostService.GetBlogPostByIdAsync(Id);
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine(ex);	
+
+		}
+
+		//inject Navigation Manger first
+		if (blogPost is null)
+		{
+
+			Nav.NavigateTo("/posts");
+
+		}
+	}
+
+	private async Task HandleSubmit(BlogPostDTO blogPost)
+	{
+		await BlogPostService.UpdateBlogPostAsync(blogPost);
+		Nav.NavigateTo("/posts");
+	}
+}

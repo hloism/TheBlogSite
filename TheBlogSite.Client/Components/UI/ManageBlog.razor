@@ -1,0 +1,68 @@
+﻿@if (BlogPost is not null)
+{
+	<div class="card h-100">
+		<div class="row g-0">
+			<div class="col-12 col-md-4 square-img-container rounded-start overflow-hidden">
+				<img src="@BlogPost.ImageUrl" class="square-img" />
+			</div>
+			<div class="col-12 col-md-8">
+				<div class="card-body">
+					<h5 class="card-title">@BlogPost.Title</h5>
+					<div class="card-text">
+						<span class="fw-bold me-2">@BlogPost.Abstract</span>
+					</div>
+					<div class="card-text">
+						<span class="fw-bold me-2"></span>@BlogPost.Comments.Count
+					</div>
+
+
+					@*Modify for Deleting //perform html and css when compiled*@
+
+					@if (isDeleting == false)
+					{
+						<div>
+							<a class="me-3 editIcons" href="/posts/edit/@BlogPost.Id">Edit<i class="bi bi-pencil-fill"></i></a>
+						@* 	<a class="me-3 editIcons" href="/contacts/email/@BlogPost.Id">Draft</a> *@
+							<a class="me-3 editIcons" role="button" @onclick="() => isDeleting = true">Delete<i class="bi bi-trash-fill text-danger"></i></a>
+						</div>
+					}
+					else
+					{
+						<div class="text-danger">Are you sure you want to DELETE this blog?</div>
+						<button class="btn btn-danger btn-sm me-1" @onclick="DeleteBlogPost">Delete</button>
+						<button class="btn btn-secondary btn-sm" @onclick="() => isDeleting = false">Cancel</button>
+					}
+@* 					<div class="hstack gap-2 flex-wrap mt-2">
+						@foreach (CategoryDTO category in BlogPost.Tags)
+						{
+							<a href="blogPosts?categoryId=@category.Id" class="text-decoration-none badge rounded-pill border border-1 text-dark fm-normal">
+								@category.Name
+							</a>
+						}
+					</div> *@
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+
+
+
+@code {
+	[Parameter, EditorRequired]
+	public BlogPostDTO? BlogPost { get; set; }
+
+	[Parameter, EditorRequired]
+	public EventCallback<int> OnDelete { get; set; }
+
+	bool isDeleting = false;
+
+	//method
+	private async Task DeleteBlogPost()
+	{
+		await OnDelete.InvokeAsync(BlogPost!.Id);
+		isDeleting = false;
+	}
+
+}

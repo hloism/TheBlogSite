@@ -1,0 +1,88 @@
+﻿@page "/"
+@using TheBlogSite.Client.Helpers
+@using TheBlogSite.Client.Components.UI
+@attribute [Authorize]
+
+
+@layout SidebarLayout
+@rendermode InteractiveServer
+@inject IBlogPostService BlogService
+@inject ICategoryService CategoryService
+@inject NavigationManager Nav
+
+
+<PageTitle>Home</PageTitle>
+
+<!-- Breadcrumb -->
+<nav aria-label="breadcrumb">
+	<ol class="pt-lg-3 pb-lg-4 pb-2 breadcrumb">
+		<li class="breadcrumb-item"><a href="index.html">Home</a></li>
+		<li class="breadcrumb-item active" aria-current="page">Blog list with sidebar</li>
+	</ol>
+</nav>
+
+
+<div class="row mb-md-2 mb-xl-4">
+
+	<!-- Blog posts -->
+	<div class="col-lg-9 pe-lg-4 pe-xl-5">
+		<h1 class="pb-3 pb-lg-4">The BlogSite</h1>
+
+		@foreach (BlogPostDTO blogPost in blogPosts.Data)
+		{
+			<!-- Post -->
+			<article class="row g-0 border-0 mb-4">
+				<a class="col-sm-5 bg-repeat-0 bg-size-cover bg-position-center rounded-5" href="posts/@blogPost.Slug" style="background-image: url(@(blogPost.ImageUrl ?? ImageHelper.DefaultBlogImage)); min-height: 14rem" aria-label="Post image"></a>
+				<div class="col-sm-7">
+					<div class="pt-4 pb-sm-4 ps-sm-4 pe-lg-4">
+						<h3>
+							<a href="posts/@blogPost.Slug">@blogPost.Title</a>
+						</h3>
+						<p class="d-sm-none d-md-block">@blogPost.Abstract</p>
+						<div class="d-flex flex-wrap align-items-center mt-n2">
+							<a class="nav-link text-body-secondary fs-sm fw-normal d-flex align-items-end p-0 mt-2" href="">
+								@blogPost.Comments.Count
+								<i class="ai-share fs-lg ms-1"></i>
+							</a>
+							<span class="fs-xs opacity-20 mt-2 mx-3">|</span>
+							<span class="fs-sm text-body-secondary mt-2">@blogPost.Created.ToString("MM.dd.yy")</span>
+							<span class="fs-xs opacity-20 mt-2 mx-3">|</span>
+							<a class="badge text-nav fs-xs border mt-2" href="/author/posts/categories">@blogPost.Category?.Name></a>
+						</div>
+					</div>
+				</div>
+			</article>
+
+		}
+
+		@*Pagination*@
+
+	</div>
+
+	@*SideBar (add Sidebar-Layout)*@
+
+</div>
+
+@code {
+
+	[SupplyParameterFromQuery]
+	public string? Query { get; set; }
+
+	[SupplyParameterFromQuery]
+	public int Page { get; set; }
+
+	private int pageSize = 4;
+
+	private PagedList<BlogPostDTO> blogPosts = new PagedList<BlogPostDTO>();
+
+
+
+	//private IEnumerable<BlogPostDTO> blogPosts = [];
+
+
+
+	protected override async Task OnInitializedAsync()
+	{
+		blogPosts = await BlogService.GetPublishedPostsAsync(Page, pageSize);
+	}
+}

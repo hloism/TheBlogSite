@@ -1,0 +1,219 @@
+﻿@using TheBlogSite.Client.Helpers
+
+@inject IBlogPostService BlogPostService
+@inject ICategoryService CategoryService
+
+@if (BlogPost is not null)
+{
+	<EditForm Model="BlogPost" OnValidSubmit="HandleSubmit" class="row">
+		<DataAnnotationsValidator />
+		@*Image*@
+		<div class="col-12 col-md-4">
+			<div class="mb-2">
+				<img class="img-fluid rounded-3" style="max-height: 350px"
+					 src="@(string.IsNullOrEmpty(BlogPost.ImageUrl) ?ImageHelper.DefaultBlogImage : BlogPost.ImageUrl)" />
+			</div>
+		</div>
+		<div class="col-lg-8">
+			@*Name*@
+			<div class="mb-2">
+				<label class="form-label">Name</label>
+				<InputText class="form-control" @bind-Value="BlogPost.Title" />
+				<ValidationMessage For="() => BlogPost.Title" />
+			</div>
+			<div class="mb-2">
+				<label class="form-label">Image</label>
+				<InputFile class="form-control mt-3" accept=".png,.jpg,.jpeg,.svg" OnChange="HandleFileChange" />
+				<span class="text-danger">@fileError</span>
+			</div>
+
+			@*Abstract*@
+			<div class="mb-2">
+				<label class="form-label">Abstract</label>
+				<InputTextArea class="form-control" @bind-Value="BlogPost.Abstract" rows="3"></InputTextArea>
+				<ValidationMessage For="() => BlogPost.Abstract" />
+			</div>
+
+			@*Category*@
+			<div class="mb-2">
+				<label class="form-label">Category</label>
+				@*capture the category ID!*@
+				<InputSelect class="form-select" @bind-Value="BlogPost.CategoryId">
+					<option value="">Select a Category</option>
+					@foreach (CategoryDTO category in categories)
+					{
+						<option value="@category.Id">@category.Name</option>
+					}
+				</InputSelect>
+				<ValidationMessage For="() => BlogPost.Title" />
+			</div>
+
+			@* 			<div class="mb-2 flex-fill vstack">
+		<label class="form-label">Description</label>
+		<InputTextArea class="form-control" @bind-Value="BlogPost.Content" rows="15" ></InputTextArea>
+		<ValidationMessage For="() => BlogPost.Content" />
+		</div> *@
+			<div class="col-lg-8 vstack gap-2">
+				@* post content*@
+				<div class="flex-fill vstack">
+					<label class="form-label">Content</label>
+					<TinyMCE.Blazor.Editor ScriptSrc="/tinymce/tinymce.min.js"
+										   @bind-Value="BlogPost.Content"
+										   Field="() => BlogPost.Content"
+										   ClassName="rich-text-editor"
+										   Conf="editorConfig" />
+					<ValidationMessage For="() => BlogPost.Content" />
+				</div>
+			</div>
+
+
+		</div>
+
+		<div class="col-12">
+			@* isPublished *@
+			<div class="form-check">
+				<label class="form-check-label">
+					<InputCheckbox class="form-check-input" @bind-Value="BlogPost.IsPublished"></InputCheckbox>
+					Publish
+				</label>
+			</div>
+		</div>
+
+		@*Tags here*@
+		<div class="mb-2">
+			<label class="form-label">Tags</label>
+			<InputText class="form-control" @bind-Value ="tagNames"></InputText>
+		</div>
+
+
+
+		<button class="btn btn-primary" type="submit">Save</button>
+		<ValidationSummary />
+	</EditForm>
+}
+
+
+
+@code {
+
+	[Parameter, EditorRequired]
+	public BlogPostDTO? BlogPost { get; set; }
+
+	[Parameter, EditorRequired]
+	public EventCallback<BlogPostDTO> OnSubmit { get; set; }
+
+	[CascadingParameter]
+	private Task<AuthenticationState>? AuthStateTask { get; set; }
+
+
+	private IEnumerable<CategoryDTO> categories = [];
+	private string? fileError;
+
+
+	//tags
+	private string tagNames = string.Empty;
+
+	// tinyMCE config
+	private static readonly Dictionary<string, object> editorConfig = new()
+	{
+		{ "toolbar", "undo redo | bold italic underline | link codesample " },
+		{ "plugins", "anchor autolink link charmap preview table codesample" },
+		{ "default_link_target", "_blank" },
+		{ "link_assume_external_targets", true },
+		{ "link_context_toolbar", true },
+		{ "codesample_languages", new object[] {
+				new { text = "HTML/XML", value = "markup" },
+				new { text = "JavaScript", value = "javascript" },
+				new { text = "CSS", value = "css" },
+				new { text = "C#", value = "csharp" },
+				new { text = "Razor", value = "razor" },
+				new { text = "JSON", value = "json" },
+	}
+		},
+		{ "codesample_global_prismjs", true },
+		{ "promotion", false },
+		{ "height", "100%" },
+	};
+
+
+	protected override async Task OnInitializedAsync()
+	{
+		try
+		{
+			categories = await CategoryService.GetCategoriesAsync();
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine(ex);
+		}
+	}
+
+	protected override void OnParametersSet()
+	{
+		if (BlogPost == null)
+		{
+			return;	
+		}
+
+		List<string> listofTagnames = [];
+
+		foreach (TagDTO tag in BlogPost.Tags)
+		{
+			listofTagnames.Add(tag.Name!);	
+		}
+
+		tagNames = string.Join(",", listofTagnames);
+
+
+		//created a list of strings called names 
+		// promote w/ extension methods 
+		//"," => comma delimited
+
+	}
+
+	private async Task HandleSubmit()
+	{
+		try
+		{
+			IEnumerable<string> listofTagNames = tagNames.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+
+			List<TagDTO> tags = [];
+			foreach (string name in listofTagNames)
+			{
+				TagDTO tag = new TagDTO() { Name = name };
+				tags.Add(tag);
+				//individual tag instatuating a tag DTO 
+				//instatuating class use the constructor to create the object 
+			}
+			BlogPost!.Tags = tags;
+
+			await OnSubmit.InvokeAsync(BlogPost);
+		}
+		catch (Exception ex)
+		{
+
+			Console.WriteLine(ex);
+		}
+	}
+
+	private async Task HandleFileChange(InputFileChangeEventArgs args)
+	{
+		fileError = null;
+
+		IBrowserFile selectedFile = args.File;
+
+		if (selectedFile.Size > ImageHelper.MaxFileSize)
+		{
+			fileError = "The selected image is too large.";
+		}
+		try
+		{
+			BlogPost!.ImageUrl = await ImageHelper.GetDataUrl(selectedFile);
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine(ex);
+			fileError = "Could not read the selected image file.";
+		}
+	}
+}

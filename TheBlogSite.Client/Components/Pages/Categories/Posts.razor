@@ -1,0 +1,113 @@
+﻿@page "/author/posts/manage"
+@rendermode InteractiveServer
+
+@attribute [Authorize]
+@inject IBlogPostService BlogPostService
+
+
+<div class="container">
+	<EditForm Model="formBlogPost" OnValidSubmit="HandleSubmit">
+		<DataAnnotationsValidator />
+
+		<h3>Manage Posts</h3>
+
+		@* 				<div class="vstack">
+		<InputText class="form-control" placeholder="BlogPost Name" @bind-Value="formBlogPost.Title" />
+		<button type="submit" class="btn btn-primary mt-2">
+		<i class="bi bi-floppy">Submit</i>
+		</button>
+		</div> *@
+		<ValidationMessage For="() => formBlogPost.Title" />
+
+	</EditForm>
+
+	<BlogPostAccordion BlogPosts="posts.Data" OnBlogPostDelete="DeleteBlogPost" OnBlogPostUpdate="UpdateBlogPost" />
+
+</div>
+
+
+
+
+@code {
+	[CascadingParameter]
+	private Task<AuthenticationState>? AuthStateTask { get; set; }
+
+	private UserInfo? userInfo;
+	//holds all the categories for the user
+
+
+	[SupplyParameterFromQuery]
+	public string? Query { get; set; }
+
+	[SupplyParameterFromQuery]
+	public int Page { get; set; }
+
+	private int pageSize = 4;
+
+	private PagedList<BlogPostDTO> posts = new PagedList<BlogPostDTO>();
+
+
+	private IEnumerable<BlogPostDTO> blogPosts = [];
+
+	//used for the edit form model
+	private BlogPostDTO formBlogPost = new BlogPostDTO();
+
+
+	protected override async Task OnInitializedAsync()
+	{
+		userInfo = await UserInfoHelper.GetUserInfoAsync(AuthStateTask);
+		posts = await BlogPostService.GetPublishedPostsAsync(Page, pageSize);
+	}
+
+	private async Task HandleSubmit()
+	{
+		try
+		{
+			await BlogPostService.CreateBlogPostAsync(formBlogPost);
+			//clear the form
+			formBlogPost = new BlogPostDTO();
+
+			//reload the categories
+			posts = await BlogPostService.GetPublishedPostsAsync(Page, pageSize);
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine(ex);
+			throw;
+		}
+	}
+
+	private async Task DeleteBlogPost(int blogPostId)
+	{
+		try
+		{
+			await BlogPostService.DeleteBlogPostAsync(blogPostId);
+
+			//reload the categories
+			posts = await BlogPostService.GetPublishedPostsAsync(Page, pageSize);
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine(ex);
+			throw;
+		}
+
+	}
+
+	private async Task UpdateBlogPost(BlogPostDTO blogPost)
+	{
+		try
+		{
+			await BlogPostService.UpdateBlogPostAsync(blogPost);
+			posts = await BlogPostService.GetPublishedPostsAsync(Page, pageSize);
+		}
+		catch (Exception ex)
+		{
+
+			Console.WriteLine(ex);
+			throw;
+		}
+
+
+	}
+}

@@ -1,0 +1,142 @@
+﻿@using TheBlogSite.Client.Helpers
+@inject ICategoryService CategoryService
+@rendermode InteractiveServer
+
+
+@if (Category is not null)
+{
+	<EditForm Model="Category" OnValidSubmit="HandleSubmit" class="row">
+		<DataAnnotationsValidator />
+
+		@if (status == Status.Viewing)
+		{
+			<div class="card h-100">
+				<div class="row-g-0">
+					@* Image *@
+					<div class=" col-12 col-md-4 square-img-container rounded-start overflow-hidden">
+						<img src="@Category.ImageUrl" class="square-img">
+					</div>
+					@* Name *@
+					<div class="col-12 col-md-8">
+						<div class="card-body">
+							<h5 class="card-title">@Category.Name</h5>
+
+
+							@* Description *@
+							<div class="card-text">
+								<span class="fw-bold me-2">@Category.Description</span>
+							</div>
+
+							@if (isDeleting == false)
+							{
+								<div>
+									<a class="btn btn-primary">Browse Posts</a>
+									<a class="btn btn-outline-primary">Edit Category</a>
+									<a class="btn btn-danger" role="button" @onclick="() => isDeleting = true">Delete Category</a>
+								</div>
+							}
+							else
+							{
+								<div class="text-danger">Are you sure you want to DELETE this contact?</div>
+								<button class="btn btn-danger btn-sm me-1" @onclick="DeleteCategory">Delete</button>
+								<button class="btn btn-secondary btn-sm" @onclick="() => isDeleting = false">Cancel</button>
+							}
+						</div>
+					</div>
+				</div>
+			</div>
+		}
+	</EditForm>
+}
+
+@code {
+
+
+
+
+	[Parameter, EditorRequired]
+	public CategoryDTO? Category { get; set; }
+
+	[Parameter, EditorRequired]
+	public EventCallback<int> OnDelete { get; set; }
+
+	[Parameter, EditorRequired]
+	public EventCallback<CategoryDTO> OnUpdate { get; set; }
+
+	[Parameter, EditorRequired]
+	public EventCallback<CategoryDTO> OnSubmit { get; set; }
+
+	public string? imageError;
+
+	private CategoryDTO formCategory { get; set; } = new();
+	private enum Status
+	{
+		Viewing,
+		Editing,
+		Deleting,
+	}
+
+	private Status status = Status.Viewing;
+
+	//Add OnParameter Set
+	protected override void OnParametersSet()
+	{
+		if (Category != null)
+		{
+			formCategory = new CategoryDTO
+				{
+					Id = Category.Id,
+					Name = Category.Name,
+					Description = Category.Description,
+					ImageUrl = Category?.ImageUrl ?? ImageHelper.DefaultCategoryImage
+				};
+		}
+	}
+
+
+	private async Task HandleDelete()
+	{
+		if (Category != null)
+		{
+			await OnDelete.InvokeAsync(Category!.Id);
+			status = Status.Viewing;
+		}
+	}
+
+	private async Task HandleUpdate(CategoryDTO category)
+	{
+		await OnUpdate.InvokeAsync(Category);
+		status = Status.Viewing;
+	}
+
+	private async Task HandleSubmit()
+	{
+		await OnUpdate.InvokeAsync(formCategory);
+		status = Status.Viewing;
+	}
+
+	//
+
+
+
+
+
+
+	bool isDeleting = false;
+
+
+	//method
+
+
+	private async Task DeleteCategory()
+	{
+		await OnDelete.InvokeAsync(Category!.Id);
+		isDeleting = false;
+	}
+
+
+
+
+
+
+}

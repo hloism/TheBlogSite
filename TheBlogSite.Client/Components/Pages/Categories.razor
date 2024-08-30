@@ -1,0 +1,58 @@
+﻿@page "/author/posts/categories"
+@using TheBlogSite.Client.Components.UI
+@rendermode InteractiveServer
+
+@attribute [Authorize(Roles = "Author")]
+
+@inject ICategoryService CategoryService
+@inject NavigationManager NavManager
+
+
+<div class="container">
+	<h3>Categories</h3>
+
+	<div class="card-shadow">
+		<div class="card-body">
+			<CategoryForm Category="new CategoryDTO()" OnSubmit="HandleSubmit" />
+		</div>
+	</div>
+
+	<div>
+		@foreach (CategoryDTO category in categories)
+		{
+			<CategoryCard Category="category"></CategoryCard>
+		
+		}
+	</div>
+
+</div>
+
+
+@code {
+	private IEnumerable<CategoryDTO> categories = [];
+
+	protected override async Task OnInitializedAsync()
+	{
+		categories = await CategoryService.GetCategoriesAsync();
+	}
+
+
+
+	private async Task HandleSubmit(CategoryDTO categoryPost)
+	{
+		try
+		{
+			await CategoryService.CreateCategoryAsync(categoryPost);
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine(ex);
+		}
+
+
+
+		categories = await CategoryService.GetCategoriesAsync();
+
+	}
+}
+

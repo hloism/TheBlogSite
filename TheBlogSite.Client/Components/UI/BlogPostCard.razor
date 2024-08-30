@@ -1,0 +1,96 @@
+﻿@if (BlogPost is not null)
+{
+	<div class="card h-100">
+		<div class="row g-0">
+			<div class="col-12 col-md-4 square-img-container rounded-start overflow-hidden">
+				<img src="@BlogPost.ImageUrl" class="square-img" />
+
+			</div>
+			<div class="col-12 col-md-8">
+				<div class="card-body">
+					<h5 class="card-title">@BlogPost.Title</h5>
+					<div class="card-text">
+						<span class="fw-bold me-2"></span>@BlogPost.Abstract
+					</div>
+						@BlogPost.Comments, @BlogPost.Created, @BlogPost.Tags
+
+
+					@*Modify for Deleting //perform html and css when compiled*@
+
+					@if (isDeleting == false)
+					{
+						<div>
+							<a class="me-3 editIcons" href="/blogPosts/edit/@BlogPost.Id"><i class="bi bi-pencil-fill"></i></a>
+							@* <a class="me-3 editIcons" href="/blogPosts/email/@BlogPost.Id"><i class="bi bi-envelope-fill"></i></a> *@
+							<a class="me-3 editIcons" role="button" @onclick="() => isDeleting = true"><i class="bi bi-trash-fill text-danger"></i></a>
+						</div>
+					}
+					else
+					{
+						<div class="text-danger">Are you sure you want to DELETE this contact?</div>
+						<button class="btn btn-danger btn-sm me-1" @onclick="DeleteBlogPost">Delete</button>
+						<button class=" btn btn-secondary btn-sm" @onclick="() => isDeleting = false">Cancel</button>
+					}
+					<div class="hstack gap-2 flex-wrap mt-2">
+						@foreach (CategoryDTO category in BlogPost.Categories)
+						{
+							<a href="blogPosts?categoryId=@category.Id" class="text-decoration-none badge rounded-pill border border-1 text-dark fm-normal">
+								@category.Name
+							</a>
+						}
+					</div>
+				</div>
+			</div>
+		</div>
+
+		@* //check to see if this goes here *@
+		<template id="blog-card-template">
+			<article class="card mb-4 blog-article">
+				<div class="row g-0 blog-row">
+					<div class="col-lg-4 blog-header">
+						<a href="#" class="blog-image-link">
+						</a>
+						<div class="blog-date">
+							<div class="blog-day"></div>
+							<div class="blog-month"></div>
+						</div>
+					</div>
+					<div class="col-lg-8">
+						<div class="card-body h-100 d-flex flex-column justify-content-around">
+							<h2 class="card-title"></h2>
+							<p class="card-text line-clamp">
+							</p>
+							<div>
+								<a href="#" class="btn btn-primary">Read More</a>
+							</div>
+							<p class="card-text">
+								<small class="text-muted"></small>
+							</p>
+						</div>
+					</div>
+				</div>
+			</article>
+		</template>
+
+	</div>
+}
+
+
+
+@code {
+	[Parameter, EditorRequired]
+	public BlogPostDTO? BlogPost { get; set; }
+
+	[Parameter, EditorRequired]
+	public EventCallback<int> OnDelete { get; set; }
+
+	bool isDeleting = false;
+
+	//method
+	private async Task DeleteBlogPost()
+	{
+		await OnDelete.InvokeAsync(BlogPost!.Id);
+		isDeleting = false;
+	}
+
+}

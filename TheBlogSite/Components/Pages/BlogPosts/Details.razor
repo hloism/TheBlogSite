@@ -1,0 +1,134 @@
+﻿@page "/posts/{slug}"
+@layout SidebarLayout
+
+@inject IBlogPostService BlogService
+
+
+@if (blogPost is null)
+{
+	<PageTitle>The BlogSite | Not Found</PageTitle>
+	<div class="d-flex h-100 flex-column align-items-center gap-2 my-5">
+		<h1>Uh oh!</h1>
+		<p class="lead">This post could not be found.</p>
+		<a href="/" class="btn btn-primary">Go Back Home</a>
+	</div>
+}
+else
+{
+	<PageTitle>The BlogSite| @blogPost.Title</PageTitle>
+
+	<!-- Post title + post meta -->
+	<h1 class="pb-2 pb-lg-3">@blogPost.Title</h1>
+	<div class="d-flex flex-wrap align-items-center justify-content-between border-bottom mb-4">
+		<div class="d-flex align-items-center mb-4 me-4">
+			<span class="fs-sm me-2">By:</span>
+			<a class="nav-link position-relative fw-semibold p-0" href="#author" data-scroll data-scroll-offset="80">
+				<!-- only see whats available from db do not show image-->
+				HLois Mlo
+				<span class="d-block position-absolute start-0 bottom-0 w-100" style="background-color: currentColor; height: 1px;"></span>
+			</a>
+		</div>
+	</div>
+
+	<!-- Post content -->
+	<p class="fs-lg pb-4 pb-xl-5">
+		@blogPost.Abstract
+	</p>
+
+	@* Show blog Image here if it exists *@
+	<figure class="figure d-flex justify-content-center">
+		<img class="figure-img rounded-5 mb-3" src="@(blogPost.ImageUrl ?? ImageHelper.DefaultBlogImage)" alt="Image" style="max-height: 24rem;">
+	</figure>
+
+
+	<div class="post-content">
+		@* turn content into markup *@
+		@((MarkupString)blogPost.Content!)
+	</div>
+
+	@* check for Tags here ond if there are any then...*@
+	@if (blogPost.Tags.Any())
+	{
+		<!-- Tags -->
+		<div class="d-flex flex-wrap pb-5 pt-3 pt-md-4 pt-xl-5 mt-xl-n2">
+			<h3 class="h6 py-1 mb-0 me-4">Relevant tags:</h3>
+			@* Lets loop over Tags here *@
+			@foreach (TagDTO tag in blogPost.Tags)
+			{
+				<a class="nav-link fs-sm py-1 px-0 me-3" href="#">
+					<span class="text-primary"></span>@tag.Name
+				</a>
+			}
+		</div>
+	}
+
+	<!-- Author widget -->
+	<div class="border-top border-bottom py-4" id="author">
+		<div class="d-flex align-items-start py-2">
+			<img class="d-block rounded-circle mb-3" src="api/uploads/author" width="56" alt="Author image">
+			<div class="d-md-flex w-100 ps-4">
+				<div style="max-width: 26rem;">
+					<h3 class="h5 mb-2">Hlois MLo</h3>
+					<p class="fs-sm mb-0">
+						Talk about yourself Porta nisl a ultrices ut libero id. Gravida mi neque, tristique justo, et pharetra laoreet nulla est nulla cras ac arcu sed mattis tristique convallis suspen enim blandit massa cursus augue dui mattis morbi velit semper nunc at etiam lacinia.
+					</p>
+				</div>
+				<div class="pt-4 pt-md-0 ps-md-4 ms-md-auto">
+					<h3 class="h5">Connect With Me:</h3>
+					<div class="d-flex">
+						<a class="nav-link p-2 me-2" href="#" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Instagram" aria-label="Instagram">
+							<i class="ai-instagram"></i>
+						</a>
+						<a class="nav-link p-2 me-2" href="#" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Facebook" aria-label="Facebook">
+							<i class="ai-facebook"></i>
+						</a>
+						<a class="nav-link p-2 me-2" href="#" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Telegram" aria-label="Telegram">
+							<i class="ai-telegram fs-sm"></i>
+						</a>
+						<a class="nav-link p-2" href="#" data-bs-toggle="tooltip" data-bs-placement="bottom" title="X" aria-label="X">
+							<i class="ai-x"></i>
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+	@* Comments will be handles here -- relationship between data and table authenticated user should be able to comment! *@
+	@* -----------> <--------------- *@
+	<AuthorizeView>
+		<Authorized>
+			<CommentArea @rendermode="InteractiveAuto" BlogPostId="blogPost.Id" Comments="blogPost.Comments" />
+		</Authorized>
+
+		<NotAuthorized>
+			<CommentArea BlogPostId="blogPost.Id" Comments="blogPost.Comments" />
+		</NotAuthorized>
+
+	</AuthorizeView>
+	@* -----------> <--------------- *@
+
+
+	@* this component will execute the exported onUpdate function when the page updates *@
+<BlazorPageScript.PageScript Src="./Components/Pages/Posts/Details.razor.js" />
+}
+
+@code {
+	//look at page directive to route
+	[Parameter]
+	public string? Slug { get; set; }
+
+	private BlogPostDTO? blogPost = new();
+
+
+	protected override async Task OnInitializedAsync()
+	{
+		if (!string.IsNullOrEmpty(Slug))
+		{
+			blogPost = await BlogService.GetBlogPostBySlugAsync(Slug);
+		}
+	}
+
+}
