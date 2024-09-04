@@ -1,6 +1,5 @@
 ﻿using TheBlogSite.Data;
 using TheBlogSite.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.EntityFrameworkCore;

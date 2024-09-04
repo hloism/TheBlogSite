@@ -1,4 +1,4 @@
-﻿@page "/"
+﻿@page "/categories"
 @using TheBlogSite.Client.Helpers
 @using TheBlogSite.Client.Components.UI
 @attribute [Authorize]
@@ -11,13 +11,13 @@
 @inject NavigationManager Nav
 
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Categories</PageTitle>
 
 <!-- Breadcrumb -->
 <nav aria-label="breadcrumb">
 	<ol class="pt-lg-3 pb-lg-4 pb-2 breadcrumb">
 		<li class="breadcrumb-item"><a href="index.html">Home</a></li>
-		<li class="breadcrumb-item active" aria-current="page">The BlogSite</li>
+		<li class="breadcrumb-item active" aria-current="page">Blog list with sidebar</li>
 	</ol>
 </nav>
 
@@ -26,9 +26,9 @@
 
 	<!-- Blog posts -->
 	<div class="col-lg-9 pe-lg-4 pe-xl-5">
-		<h1 class="pb-3 pb-lg-4">The BlogSite</h1>
+		<h1 class="pb-3 pb-lg-4">Categories</h1>
 
-		@foreach (BlogPostDTO blogPost in blogPosts.Data)
+		@foreach (CategoryDTO category in categories)
 		{
 			<!-- Post -->
 			<article class="row g-0 border-0 mb-4">
@@ -40,7 +40,7 @@
 						</h3>
 						<p class="d-sm-none d-md-block">@blogPost.Abstract</p>
 						<div class="d-flex flex-wrap align-items-center mt-n2">
-							<a class="nav-link text-body-secondary fs-sm fw-normal d-flex align-items-end p-0 mt-2" href="/comment">
+							<a class="nav-link text-body-secondary fs-sm fw-normal d-flex align-items-end p-0 mt-2" href="">
 								@blogPost.Comments.Count
 								<i class="ai-share fs-lg ms-1"></i>
 							</a>
@@ -56,7 +56,7 @@
 		}
 
 		@*Pagination*@
-		<Paginator TotalPages="blogPosts.TotalItems"></Paginator>
+
 	</div>
 
 	@*SideBar (add Sidebar-Layout)*@

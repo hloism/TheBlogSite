@@ -16,10 +16,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Remove="Components\Account\Pages\Manage\Login.razor.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Components\Pages\BlogPosts\Details - Copy.razor.js" />
     <None Remove="Components\Pages\BlogPosts\Details.razor.js" />
   </ItemGroup>
 
   <ItemGroup>
+    <_ContentIncludedByDefault Remove="Components\Account\Pages\Manage\Login.razor.razor" />
     <_ContentIncludedByDefault Remove="wwwroot\prism.css" />
   </ItemGroup>
 
@@ -3444,6 +3450,10 @@
 
   <ItemGroup>
     <Content Include="Components\Pages\BlogPosts\Details.razor.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Components\Account\Pages\Manage\Login.razor.razor" />
   </ItemGroup>
 
 </Project>

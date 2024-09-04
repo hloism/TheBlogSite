@@ -14,7 +14,7 @@ namespace TheBlogSite.Services.Interfaces
         Task<BlogPost?> GetBlogPostBySlugAsync(string slug);
         Task<BlogPost?> GetBlogPostByIdAsync(int id);
         Task<IEnumerable<BlogPost>> GetTopBlogPostsAsync(int count);
-        Task<IEnumerable<BlogPost>> GetPostsByCategoryId(int categoryId);
+        Task<PagedList<BlogPost>> GetPostsByCategoryId(int categoryId, int page, int pageSize);
         Task<PagedList<BlogPost>> SearchBlogPostsAsync(string query, int page, int pageSize);
 
         Task DeleteBlogPostAsync(int blogPostId);

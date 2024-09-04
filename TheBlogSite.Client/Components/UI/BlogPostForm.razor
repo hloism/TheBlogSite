@@ -5,7 +5,7 @@
 	<EditForm Model="BlogPost" OnValidSubmit="HandleSubmit" class="row">
 		<DataAnnotationsValidator />
 
-		<div class="col-12 col-md-4">
+		<div class="col-12 col-lg-4">
 			<div class="mb-2">
 				@*Name*@
 				<div class="mb-2">
@@ -32,52 +32,50 @@
 							<option value="@category.Id">@category.Name</option>
 						}
 					</InputSelect>
-					<ValidationMessage For="() => BlogPost.Title" />
+					<ValidationMessage For="() => BlogPost.CategoryId" />
 				</div>
 				@*Image*@
-				<label class="form-label">Image</label>
-				<br />
-				<img class="img-fluid rounded-3" style="max-height: 350px"
-					 src="@(string.IsNullOrEmpty(BlogPost.ImageUrl) ?ImageHelper.DefaultBlogImage : BlogPost.ImageUrl)" />
-
 				<div class="mb-2">
-					<InputFile class="form-control mt-3" accept=".png,.jpg,.jpeg,.svg" OnChange="HandleFileChange" />
+					<label class="form-label">Image</label>
+					<br />
+					<img class="img-fluid rounded-3" style="max-height: 350px"
+						 src="@(string.IsNullOrEmpty(BlogPost.ImageUrl) ? ImageHelper.DefaultBlogImage : BlogPost.ImageUrl)" />
+					<InputFile class="form-control mt-3" accept=".png,.jpg,.jpeg,.svg" OnChange="HandleFileChange"></InputFile>
 					<span class="text-danger">@fileError</span>
-				</div>
-
-				<div class="col-12">
-					@* isPublished *@
-					<div class="form-check">
-						<label class="form-check-label">
-							<InputCheckbox class="form-check-input" @bind-Value="BlogPost.IsPublished"></InputCheckbox>
-							Publish
-						</label>
-					</div>
 				</div>
 			</div>
 		</div>
-	@* 	<div class="col-lg-8"> *@
-
-		 	<div class="col-lg-8 vstack gap-2"> 
-				@* post content*@
-				 <div class="flex-fill vstack"> 
-					<label class="form-label">Content</label>
-					<TinyMCE.Blazor.Editor ScriptSrc="/tinymce/tinymce.min.js"
-										   @bind-Value="BlogPost.Content"
-										   Field="() => BlogPost.Content"
-										   ClassName="rich-text-editor"
-										   Conf="editorConfig" />
-					<ValidationMessage For="() => BlogPost.Content" />
-				</div> 
-				@* </div> *@
-
-				@*Tags here*@
-				<div class="mb-2">
-					<label class="form-label">Tags</label>
-					<InputText class="form-control" @bind-Value="tagNames"></InputText>
-				</div>
-				<button class="btn btn-primary" type="submit">Save</button>
+		<div class="col-lg-8 vstack gap-2">
+			@* post content*@
+			<div class="flex-fill vstack">
+				<label class="form-label">Content</label>
+				<TinyMCE.Blazor.Editor ScriptSrc="/tinymce/tinymce.min.js"
+									   @bind-Value="BlogPost.Content"
+									   Field="() => BlogPost.Content"
+									   ClassName="rich-text-editor"
+									   Conf="editorConfig" />
+				<ValidationMessage For="() => BlogPost.Content" />
 			</div>
+			@* </div> *@
+
+			@*Tags here*@
+			<div class="mb-2">
+				<label class="form-label">Tags</label>
+				<InputText class="form-control" @bind-Value="tagNames"></InputText>
+			</div>
+
+		</div>
+
+		<div class="col-12">
+			@* isPublished *@
+			<div class="form-check">
+				<label class="form-check-label">
+					<InputCheckbox class="form-check-input" @bind-Value="BlogPost.IsPublished"></InputCheckbox>
+					Publish
+				</label>
+			</div>
+			<button class="btn btn-primary" type="submit">Save</button>
+		</div>
 
 		<ValidationSummary />
 	</EditForm>
@@ -138,21 +136,21 @@
 	{
 		if (BlogPost == null)
 		{
-			return;	
+			return;
 		}
 
 		List<string> listofTagnames = [];
 
 		foreach (TagDTO tag in BlogPost.Tags)
 		{
-			listofTagnames.Add(tag.Name!);	
+			listofTagnames.Add(tag.Name!);
 		}
 
 		tagNames = string.Join(",", listofTagnames);
 
 
-		//created a list of strings called names 
-		// promote w/ extension methods 
+		//created a list of strings called names
+		// promote w/ extension methods
 		//"," => comma delimited
 
 	}
@@ -168,8 +166,8 @@
 			{
 				TagDTO tag = new TagDTO() { Name = name };
 				tags.Add(tag);
-				//individual tag instatuating a tag DTO 
-				//instatuating class use the constructor to create the object 
+				//individual tag instatuating a tag DTO
+				//instatuating class use the constructor to create the object
 			}
 			BlogPost!.Tags = tags;
 
@@ -201,5 +199,6 @@
 			Console.WriteLine(ex);
 			fileError = "Could not read the selected image file.";
 		}
+
 	}
 }

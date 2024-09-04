@@ -24,7 +24,7 @@
 			@foreach (var category in topcategories)
 			{
 				<li>
-					<a class="nav-link d-flex p-0" href="/author/posts/categories/">
+					<a class="nav-link d-flex p-0" href="category/posts/@category.Id">
 						@category.Name
 						<span class="fs-sm text-body-secondary ms-2">(@category.Posts.Count)</span>
 					</a>
@@ -88,7 +88,7 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		topcategories = await CategoryService.GetTopCategoriesAsync(5);
+		topcategories = await CategoryService.GetTopCategoriesAsync(3);
 		blogPosts = await BlogPostService.GetTopBlogPostsAsync(3);
 	}
 

@@ -46,14 +46,15 @@
 		if (blogPost is null)
 		{
 
-			Nav.NavigateTo("/posts");
+			Nav.NavigateTo("/");
 
 		}
 	}
 
+
 	private async Task HandleSubmit(BlogPostDTO blogPost)
 	{
 		await BlogPostService.UpdateBlogPostAsync(blogPost);
-		Nav.NavigateTo("/posts");
+		Nav.NavigateTo("/");
 	}
 }

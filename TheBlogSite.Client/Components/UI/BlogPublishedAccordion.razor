@@ -2,12 +2,10 @@
 	@foreach (var blogPost in BlogPosts)
 	{
 		<BlogPostAccordionItem @key="blogPost.Id"
-							   BlogPost="blogPost"
-							   AccordionId="@accordionId"
-							   OnUpdate="OnBlogPostUpdate"
-							   OnDelete="OnBlogPostDelete"
-							   OnPublish="OnBlogPostPublished"
-							   OnDraft="OnBlogPostDraft" />
+								BlogPost="blogPost"
+								AccordionId="@accordionId"
+								OnUpdate="OnBlogPostUpdate"
+								OnDelete="OnBlogPostDelete" />
 	}
 </div>
 
@@ -24,10 +22,4 @@
 
 	[Parameter, EditorRequired]
 	public EventCallback<BlogPostDTO> OnBlogPostUpdate { get; set; }
-
-	[Parameter]
-	public EventCallback<BlogPostDTO> OnBlogPostPublished { get; set; }
-
-	[Parameter]
-	public EventCallback<BlogPostDTO> OnBlogPostDraft { get; set; }
 }

@@ -1,23 +1,23 @@
-﻿@page "/"
+﻿@page "/tag/posts/{tagId:int}"
 @using TheBlogSite.Client.Helpers
 @using TheBlogSite.Client.Components.UI
+@using TheBlogSite.Models
 @attribute [Authorize]
-
 
 @layout SidebarLayout
 @rendermode InteractiveServer
-@inject IBlogPostService BlogService
+@inject IBlogPostService BlogPostService
 @inject ICategoryService CategoryService
 @inject NavigationManager Nav
 
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Tag Page</PageTitle>
 
 <!-- Breadcrumb -->
 <nav aria-label="breadcrumb">
 	<ol class="pt-lg-3 pb-lg-4 pb-2 breadcrumb">
-		<li class="breadcrumb-item"><a href="index.html">Home</a></li>
-		<li class="breadcrumb-item active" aria-current="page">The BlogSite</li>
+		<li class="breadcrumb-item"><a href="/posts">Category>Category</a></li>
+		<li class="breadcrumb-item active" aria-current="page">Blogs by Category</li>
 	</ol>
 </nav>
 
@@ -26,7 +26,7 @@
 
 	<!-- Blog posts -->
 	<div class="col-lg-9 pe-lg-4 pe-xl-5">
-		<h1 class="pb-3 pb-lg-4">The BlogSite</h1>
+		<h1 class="pb-3 pb-lg-4">Blogs in "@tag?.Name" Tag</h1>
 
 		@foreach (BlogPostDTO blogPost in blogPosts.Data)
 		{
@@ -65,6 +65,9 @@
 
 @code {
 
+	[Parameter]
+	public int TagId { get; set; }
+
 	[SupplyParameterFromQuery]
 	public string? Query { get; set; }
 
@@ -75,14 +78,20 @@
 
 	private PagedList<BlogPostDTO> blogPosts = new PagedList<BlogPostDTO>();
 
-
-
-	//private IEnumerable<BlogPostDTO> blogPosts = [];
-
-
+	private TagDTO? tag;
 
 	protected override async Task OnInitializedAsync()
 	{
-		blogPosts = await BlogService.GetPublishedPostsAsync(Page, pageSize);
+		tag = await BlogPostService.GetTagByIdAsync(TagId);
+
 	}
+
+	protected override async Task OnParametersSetAsync()
+	{
+
+		blogPosts = await BlogPostService.GetPostsByCategoryId(TagId, Page, pageSize);
+	}
+
+
 }
+

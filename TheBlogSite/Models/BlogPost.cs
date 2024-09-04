@@ -1,15 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using TheBlogSite.Data;
 using TheBlogSite.Client.Models;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.Extensions.Hosting;
-using static System.Net.Mime.MediaTypeNames;
-using System.Reflection.Metadata;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Reflection;
-using SendGrid.Helpers.Mail;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.EntityFrameworkCore.Migrations.Operations;
 
 
 namespace TheBlogSite.Models

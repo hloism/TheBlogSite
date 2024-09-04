@@ -157,7 +157,6 @@ namespace TheBlogSite.Services.Repository
 			using ApplicationDbContext context = contextFactory.CreateDbContext();
 			//eager the data from public virtual()
 			BlogPost? post = await context.BlogPosts
-											.Where(b => b.IsPublished == true && b.IsDeleted == false)
 											.Include(b => b.Category)
 											.Include(b => b.Tags)
 											.Include(b => b.Comments).ThenInclude(c => c.Author)
@@ -206,16 +205,16 @@ namespace TheBlogSite.Services.Repository
 			return posts;
 		}
 
-		public async Task<IEnumerable<BlogPost>> GetPostsByCategoryId(int categoryId)
+		public async Task<PagedList<BlogPost>> GetPostsByCategoryId(int categoryId, int page, int pageSize)
 		{
 			using ApplicationDbContext context = contextFactory.CreateDbContext();
 
-			IEnumerable<BlogPost> posts = await context.BlogPosts
+			PagedList<BlogPost> posts = await context.BlogPosts
 														.Where(b => b.IsPublished == true && b.IsDeleted == false && b.CategoryId == categoryId)
 														.Include(b => b.Category)
 														.Include(b => b.Comments)
 														.OrderByDescending(b => b.Created)
-														.ToListAsync();
+														.ToPagedListAsync(page, pageSize);
 			return posts;
 		}
 
@@ -252,6 +251,7 @@ namespace TheBlogSite.Services.Repository
 			using ApplicationDbContext context = contextFactory.CreateDbContext();
 
 			Tag? tag = await context.Tags
+									
 									.FirstOrDefaultAsync(t => t.Id == tagId);
 			return tag;
 		}
@@ -261,10 +261,10 @@ namespace TheBlogSite.Services.Repository
 			using ApplicationDbContext context = contextFactory.CreateDbContext();
 
 			List<BlogPost> blogPosts = await context.BlogPosts
+				.Where(b => b.IsPublished == true && b.IsDeleted == false)
 				.Include(c => c.Comments)
-				//.OrderByDescending(c => c.Created)
-				//.Count())
-				//.Take(count)
+				.OrderByDescending(c => c.Comments.Count)
+				.Take(count)
 				.ToListAsync();
 
 			return blogPosts;
@@ -383,35 +383,6 @@ namespace TheBlogSite.Services.Repository
 			}
 		}
 
-   //     public async Task<IEnumerable<BlogPost>> SearchBlogPostsAsync(string query)
-   //     {
-			//// foreign key relationship shows here 
-   //         using ApplicationDbContext context = contextFactory.CreateDbContext();
-
-			//string normalizedQuery = query.Trim().ToLower();
-
-			//IEnumerable<BlogPost> results = await context.BlogPosts
-			//	.Where(b => b.IsPublished == true && b.IsDeleted == false)
-			//	.Include(b => b.Category)
-			//	.Include(b => b.Tags) // needs to be in a list of strings w/ any tag name as well as comments (foreign key table)
-			//	.Include(b => b.Comments) // content of comment (direct property of model ask the author F/L Name that live in another table)
-			//		.ThenInclude(c=> c.Author)
-			//	.Where(b => string.IsNullOrWhiteSpace(normalizedQuery)
-			//			|| b.Title!.ToLower().Contains(normalizedQuery)
-   //                     || b.Abstract!.ToLower().Contains(normalizedQuery)
-   //                     || b.Content!.ToLower().Contains(normalizedQuery)
-   //                     || b.Category!.Name!.ToLower().Contains(normalizedQuery)
-   //                     || b.Tags!.Select(t => t.Name!.ToLower()).Any(tagName => tagName.Contains(normalizedQuery))
-   //                     || b.Comments.Any(c => c.Content!.ToLower().Contains(normalizedQuery)
-			//							 || c.Author!.FirstName!.ToLower().Contains(normalizedQuery)
-			//							 || c.Author!.LastName!.ToLower().Contains(normalizedQuery))
-			//		)
-			//	.OrderByDescending(b => b.Created)
-			//	.ToListAsync();
-
-			//return results;
-
-   //     }
 	}
 
 }

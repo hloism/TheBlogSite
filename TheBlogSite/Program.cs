@@ -78,12 +78,6 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
 
 builder.Services.AddHttpClient();
 
-//builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
-
-//builder.Services.AddSingleton<IEmailSender<ApplicationUser>, EmailService>();
-//builder.Services.AddSingleton<IEmailSender, EmailService>();
-
-
 builder.Services.AddScoped<IBlogPostRepository, BlogRepository>();
 builder.Services.AddScoped<IBlogPostService, BlogPostService>();
 

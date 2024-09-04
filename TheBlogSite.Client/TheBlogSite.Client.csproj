@@ -18,7 +18,11 @@
 
   <ItemGroup>
     <Content Remove="Components\Pages\Categories.razor" />
+    <Content Remove="Components\Pages\Categories\Categories.razor" />
+    <Content Remove="Components\Pages\Categories\Drafts.razor" />
     <Content Remove="Components\Pages\Tasker.razor" />
+    <Content Remove="Components\UI\BlogPostCard.razor" />
+    <Content Remove="Components\UI\BlogPublishedAccordion.razor" />
     <Content Remove="Components\UI\CategoryCard.razor" />
     <Content Remove="Components\UI\CategoryForm.razor" />
     <Content Remove="Components\UI\ManageBlog.razor" />
@@ -41,7 +45,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <_ContentIncludedByDefault Remove="Components\Pages\Categories\Categories.razor" />
     <_ContentIncludedByDefault Remove="Components\Pages\ManageCategories.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Components\Pages\Categories\Categories.razor" />
   </ItemGroup>
 
 </Project>

@@ -78,13 +78,20 @@ namespace TheBlogSite.Services
             return posts.Select(b => b.ToDTO());
         }
 
-        public async Task<IEnumerable<BlogPostDTO>> GetPostsByCategoryId(int categoryId)
+        public async Task<PagedList<BlogPostDTO>> GetPostsByCategoryId(int categoryId, int page, int pageSize)
         {
-            IEnumerable<BlogPost> posts = await _repository.GetPostsByCategoryId(categoryId);
-            IEnumerable<BlogPostDTO> dtos = posts.Select(p => p.ToDTO());
+            PagedList<BlogPost> posts = await _repository.GetPostsByCategoryId(categoryId, page, pageSize);
+			PagedList<BlogPostDTO> postDTOs = new()
+			{
+				Page = posts.Page,
+				TotalPages = posts.TotalPages,
+				TotalItems = posts.TotalItems,
+				Data = posts.Data.Select(p => p.ToDTO())
 
-            return dtos;
-        }
+			};
+
+			return postDTOs;
+		}
 
         public async Task<IEnumerable<BlogPostDTO>> GetPostsByTagIdAsync(int tagId, int page, int pageSize)
         {

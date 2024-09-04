@@ -1,6 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using TheBlogSite.Components.Pages;
-using TheBlogSite.Data;
 using TheBlogSite.Client.Models;
 using TheBlogSite.Helpers;
 using System.ComponentModel.DataAnnotations.Schema;

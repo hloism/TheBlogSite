@@ -4,8 +4,8 @@ namespace TheBlogSite.Client.Helpers
 {
     public static class ImageHelper
     {
-        public static readonly string DefaultProfilePicture = "/images/no_person.png";
-        public static readonly string DefaultBlogImage = "/images/DefaultBlogImage.jpg";
+        public static readonly string DefaultProfilePicture = "/Images/ProfileImage.jpg";
+        public static readonly string DefaultBlogImage = "/images/DefaultBlogImage.png";
         public static readonly string DefaultCategoryImage = "/images/DefaultCategoryImage.jpg";
         public static int MaxFileSize = 5 * 1024 * 1024;
 

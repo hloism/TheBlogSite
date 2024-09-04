@@ -1,6 +1,5 @@
 ﻿using TheBlogSite.Models;
 using TheBlogSite.Client.Helpers;
-using Microsoft.AspNetCore.Razor.TagHelpers;
 using System.Text.RegularExpressions;
 
 namespace TheBlogSite.Helpers

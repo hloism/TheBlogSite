@@ -1,4 +1,4 @@
-﻿@page "/author/posts/manage"
+﻿@page "/author/posts/drafts"
 @rendermode InteractiveServer
 
 @attribute [Authorize]
@@ -9,16 +9,14 @@
 	<EditForm Model="formBlogPost" OnValidSubmit="HandleSubmit">
 		<DataAnnotationsValidator />
 
-		<h3>Manage Posts</h3>
-
+		<h3>Manage Draft Posts</h3>
 		<ValidationMessage For="() => formBlogPost.Title" />
 
 	</EditForm>
 
-	<BlogPostAccordion BlogPosts="combined" OnBlogPostDelete="DeleteBlogPost" OnBlogPostUpdate="UpdateBlogPost" OnBlogPostPublished="UpdateBlogPost" OnBlogPostDraft="UpdateBlogPost"/>
-	@* <BlogPostAccordion BlogPosts="drafts" OnBlogPostDelete="DeleteBlogPost" OnBlogPostUpdate="UpdateBlogPost" /> *@
+@* 	<BlogPostAccordion BlogPosts="drafts" OnBlogPostDelete="DeleteBlogPost" OnBlogPostUpdate="UpdateBlogPost" /> *@
+	<BlogPublishedAccordion BlogPosts="drafts" OnBlogPostDelete="DeleteBlogPost" OnBlogPostUpdate="UpdateBlogPost" />
 </div>
-
 
 @code {
 	[CascadingParameter]
@@ -35,24 +33,18 @@
 
 	private int pageSize = 4;
 
-	private PagedList<BlogPostDTO> posts = new PagedList<BlogPostDTO>();
-
-	private IEnumerable<BlogPostDTO> blogPosts = [];
 
 	private IEnumerable<BlogPostDTO> drafts = [];
 
-	private IEnumerable<BlogPostDTO> combined = [];
 	//used for the edit form model
 	private BlogPostDTO formBlogPost = new BlogPostDTO();
-
 
 
 	protected override async Task OnInitializedAsync()
 	{
 		userInfo = await UserInfoHelper.GetUserInfoAsync(AuthStateTask);
-		posts = await BlogPostService.GetPublishedPostsAsync(Page, pageSize);
 		drafts = await BlogPostService.GetDraftPostsAsync();
-		combined = posts.Data.Concat(drafts);
+
 	}
 
 	private async Task HandleSubmit()
@@ -64,9 +56,8 @@
 			formBlogPost = new BlogPostDTO();
 
 			//reload the categories
-			posts = await BlogPostService.GetPublishedPostsAsync(Page, pageSize);
+			//posts = await BlogPostService.GetPublishedPostsAsync(Page, pageSize);
 			drafts = await BlogPostService.GetDraftPostsAsync();
-			combined = posts.Data.Concat(drafts);
 		}
 		catch (Exception ex)
 		{
@@ -82,9 +73,8 @@
 			await BlogPostService.DeleteBlogPostAsync(blogPostId);
 
 			//reload the categories
-			posts = await BlogPostService.GetPublishedPostsAsync(Page, pageSize);
+			//posts = await BlogPostService.GetPublishedPostsAsync(Page, pageSize);
 			drafts = await BlogPostService.GetDraftPostsAsync();
-			combined = posts.Data.Concat(drafts);
 		}
 		catch (Exception ex)
 		{
@@ -99,9 +89,9 @@
 		try
 		{
 			await BlogPostService.UpdateBlogPostAsync(blogPost);
-			posts = await BlogPostService.GetPublishedPostsAsync(Page, pageSize);
+			//posts = await BlogPostService.GetPublishedPostsAsync(Page, pageSize);
 			drafts = await BlogPostService.GetDraftPostsAsync();
-			combined = posts.Data.Concat(drafts);
+
 		}
 		catch (Exception ex)
 		{
